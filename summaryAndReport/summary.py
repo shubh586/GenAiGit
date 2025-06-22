@@ -13,7 +13,6 @@ model = ChatGroq(
     max_retries=2,
     # other params...
 )
-from langchain.prompts import PromptTemplate
 
 report_template = PromptTemplate(
     input_variables=["topic"],
