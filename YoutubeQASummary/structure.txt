@@ -1,0 +1,28 @@
+youtube_summarizer/
+│
+├── app.py
+│   └── Entry point for CLI or FastAPI
+│
+├── config.py
+│   └── API keys, chunk sizes, model configs
+│
+├── pipeline/
+│   ├── loader.py          → Fetch & clean YouTube transcript
+│   ├── chunker.py         → Chunking logic
+│   ├── embedder.py        → Snowflake Arctic embedding logic
+│   ├── vector_store.py    → Chroma setup & retrieval
+│   ├── summarizer.py      → Summarization logic (chunk-level + global)
+│   └── qa.py              → Q&A / Retrieval-Augmented Generation logic
+│
+├── tools/
+│   ├── summarize_tool.py  → LangChain tool to summarize text
+│   ├── qa_tool.py         → LangChain tool to answer questions
+│   └── __init__.py        → Tool registry (optional)
+│
+├── utils/
+│   └── text_utils.py      → Token counters, cleaner, join/merge utils
+│
+├── data/
+│   └── store/             → Persisted Chroma DB or temp files
+│
+└── requirements.txt
