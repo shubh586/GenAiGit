@@ -1,35 +1,30 @@
 
 from chunking import getTranscriptChunks
 from loader import  extract_video_id
-from vector_store import video_already_processed,create_chroma_store
-from embedding import getEmbeddinModel
-from langchain_chroma import Chroma 
+from vector_store import YouTubeVectorStore 
+import numpy as np
+store=YouTubeVectorStore()
+# https://www.youtube.com/watch?v=q9icMJ48z6U
+# https://www.youtube.com/watch?v=XpIMuCeEtSk
+VIDEO="https://www.youtube.com/watch?v=q9icMJ48z6U"
+video_id=extract_video_id(VIDEO)
 
+db = store.load_faiss_store()
 
-video_id=extract_video_id("https://www.youtube.com/watch?v=XpIMuCeEtSk")
-
-CHROMA_DIR = "./chroma_store"
-COLLECTION_NAME = "youtube_video"
-embedding_model = getEmbeddinModel()
-
-
-if not video_already_processed(video_id):
-    chunk_list=getTranscriptChunks("https://www.youtube.com/watch?v=XpIMuCeEtSk")
-    anythin=create_chroma_store(chunk_list, video_id)
+if not store.video_already_processed(video_id):
+    chunk_list=getTranscriptChunks(VIDEO)
+    anythin=store.create_faiss_store(chunk_list, video_id)
     print(anythin)
     print("stored sucessfully")
 else:
     print("Already processed")
+    results = store.get_chunks(video_id)
+    print(results)
 
-# def delete_video_chunks(video_id: str):
-#     db = Chroma(
-#         persist_directory=CHROMA_DIR,
-#         embedding_function=embedding_model,
-#         collection_name=COLLECTION_NAME
-#     )
-    
-#     # Delete documents where metadata "source" is equal to the video_id
-#     db.delete(where={"source": video_id})
-#     print(f"Deleted all chunks with video_id: {video_id}")
-# delete_video_chunks(video_id)
+    index = db.index  # FAISS index object
+    embedding_vector = index.reconstruct(0)
+    print("Embedding vector shape:", embedding_vector.shape)
+    print("First 10 dimensions of embedding vector:\n", embedding_vector[:10]) 
+
+
 
