@@ -4,7 +4,7 @@ from loader import  extract_video_id
 from vector_store import YouTubeVectorStore 
 import numpy as np
 store=YouTubeVectorStore()
-# https://www.youtube.com/watch?v=q9icMJ48z6U
+# https://www.youtube.com/watch?v=q9icMJ48z6U  elon wali link
 # https://www.youtube.com/watch?v=XpIMuCeEtSk
 VIDEO="https://www.youtube.com/watch?v=q9icMJ48z6U"
 video_id=extract_video_id(VIDEO)

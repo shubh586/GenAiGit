@@ -13,3 +13,13 @@ multiqueryprompt = PromptTemplate(
     ),
     input_variables=["question"]
 )
+
+
+summarizer_prompt = PromptTemplate(
+    input_variables=["text"],
+    template=(
+        "You are a helpful and concise summarizer. "
+        "Summarize the following content in approximately one-third the length, preserving all important details:\n\n{text}\n\nSummary:"
+    )
+)
+
