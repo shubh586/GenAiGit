@@ -3,22 +3,22 @@ from chunking import getTranscriptChunks
 from loader import  extract_video_id
 from vector_store import YouTubeVectorStore 
 import numpy as np
-store=YouTubeVectorStore()
+
 # https://www.youtube.com/watch?v=q9icMJ48z6U  elon wali link
 # https://www.youtube.com/watch?v=XpIMuCeEtSk
 VIDEO="https://www.youtube.com/watch?v=q9icMJ48z6U"
 video_id=extract_video_id(VIDEO)
-
+store=YouTubeVectorStore(video_id)
 db = store.load_faiss_store()
 
-if not store.video_already_processed(video_id):
+if not store.video_already_processed():
     chunk_list=getTranscriptChunks(VIDEO)
-    anythin=store.create_faiss_store(chunk_list, video_id)
+    anythin=store.create_faiss_store(chunk_list)
     print(anythin)
     print("stored sucessfully")
 else:
     print("Already processed")
-    results = store.get_chunks(video_id)
+    results = store.get_chunks()
     print(results)
 
     index = db.index  # FAISS index object

@@ -1,6 +1,6 @@
 
 from langchain_core.prompts import PromptTemplate
-from langchain_core.prompts import PromptTemplate
+
 
 multiqueryprompt = PromptTemplate(
     template=(
@@ -18,8 +18,110 @@ multiqueryprompt = PromptTemplate(
 summarizer_prompt = PromptTemplate(
     input_variables=["text"],
     template=(
-        "You are a helpful and concise summarizer. "
-        "Summarize the following content in approximately one-third the length, preserving all important details:\n\n{text}\n\nSummary:"
+        "You are an expert content summarizer specialized in extracting key ideas from spoken transcripts. "
+        "Your task is to produce a crisp, insightful summary that captures the core concepts, important facts, and any discussed theories or frameworks. "
+        "Avoid unnecessary repetition or filler words. Focus on preserving the  structural flow.\n\n"
+        "Transcript:\n{text}\n\n"
+        "Summary (with emphasis on main ideas, theories, and takeaways):"
     )
 )
+
+final_summary_prompt = PromptTemplate(
+    input_variables=["summary_input"],
+    template="""
+You are a helpful and detail-aware assistant.
+You are given a list of partial summaries from different sections of a video transcript.
+Your task is to combine them into a **single coherent summary** that maintains most of the important details (approximately TWO-THIRDS about sixty-eight percent of the total original length), but removes redundancy, filler, and repetition.
+
+Make the summary clear, logically ordered, and naturally flowing as if it were written by a human who watched the entire video.
+
+Do **not** heavily shorten it — keep as much informative content as possible, just eliminate overlap and make it concise.
+
+**Output only the final summary text. Do not include any introductory phrases or headings.**
+
+Here are the partial summaries:
+{summary_input}
+"""
+)
+
+answer_prompt = PromptTemplate(
+    input_variables=["query", "context"],
+    template="""
+      You are a helpful assistant. Use the summarized transcript content below to     answer the user's question as accurately as possible.
+
+      Summarized Transcript:
+      {context}
+    
+      User Question:
+      {query}
+    
+      If the transcript does not contain information about the topic in the   question, respond clearly with:
+      "This topic was not discussed in the video."
+    
+      Otherwise, provide a helpful and direct answer.
+    """
+)
+
+
+
+chat_prompt = PromptTemplate(
+    input_variables=["query"],
+    template="""
+You are a friendly assistant. The user's query is general or unrelated to any video transcript. Be natural and conversational in your response. Avoid referencing any video or transcript.
+
+Examples:
+
+1. User: "Hello!"
+   Assistant: "Hi there! How can I help you today?"
+
+2. User: "Tell me a joke."
+   Assistant: "Sure! Why don't scientists trust atoms? Because they make up everything!"
+
+3. User: "What's your favorite movie?"
+   Assistant: "I don't watch movies, but I hear 'Inception' is quite the mind-bender!"
+
+User: {query}
+Assistant:
+"""
+)
+
+
+classification_prompt = PromptTemplate(
+    input_variables=["query"],
+    template="""
+    You are a classifier that determines whether a user query is small talk/    general conversation or a factual question related to a YouTube video   transcript.
+
+
+    Examples:
+
+    1. Query: "Hi, how are you?"
+       Response: "NO"
+
+    2. Query: "What's the speaker's opinion on AI regulation?"
+       Response: "YES"
+
+    3. Query: "Tell me a joke!"
+       Response: "NO"
+
+    4. Query: "Did the speaker mention Elon Musk?"
+       Response: "YES"
+
+    Now classify the following query:
+    "Only JSON response. No other extra information"
+   "Do not call any functions or use tools. Only respond with valid JSON    exactly in the format above."
+    Query: "{query}"
+"""
+)
+
+
+
+
+
+
+# llm_with_structured_output=answering_model.with_structured_output(YesNo)
+# currentchian=classification_prompt|llm_with_structured_output
+# demoresult=currentchian.invoke({"query":"what is the state of agi ?"})
+# print(demoresult,type(demoresult))
+# print(demoresult.model_dump(),type(demoresult.model_dump())) #dict
+
 

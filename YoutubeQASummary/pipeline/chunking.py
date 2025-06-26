@@ -8,7 +8,7 @@ def getTranscriptChunks(url: str) -> Optional[List[str]]:
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct")
     text = getTranscript(url)
     if text:
-        splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(    tokenizer=tokenizer,chunk_overlap=500, chunk_size=3000)
+        splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(    tokenizer=tokenizer,chunk_overlap=300, chunk_size=2000)
         return splitter.split_text(text)
     else:
         print('didnt get text')

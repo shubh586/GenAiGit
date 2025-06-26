@@ -7,18 +7,22 @@ from embedding import getEmbeddinModel
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from prompts import multiqueryprompt
 import pickle
+from model import multiquery_model
 
 CHROMA_DIR = "/home/shubh/Programming/genai/Mywork/llm/YoutubeQASummary/data/"
 COLLECTION_NAME = "youtube_video"
 
 class YouTubeVectorStore:
-    def __init__(self):
+    def __init__(self,youtubeID:str):
         self.embedding_model = getEmbeddinModel()
-        self.index_dir = os.path.join(CHROMA_DIR, COLLECTION_NAME)
+        self.youtubeID=youtubeID
+        self.index_dir = os.path.join(CHROMA_DIR, youtubeID)
         self.vectorstore = self.load_faiss_store()
+     
 
-    def create_faiss_store(self, text_chunks: List[str], youtubeID: Optional[str] = None):
-        docs = [Document(page_content=chunk, metadata={"source": youtubeID or "youtubeID"}) for chunk in text_chunks]
+    def create_faiss_store(self, text_chunks: List[str],summary_chunks:List[str]):
+
+        docs = [Document(page_content=summary, metadata={"source": self.youtubeID,"original_chunk":chunk }) for chunk,summary  in zip(text_chunks,summary_chunks)]
         faiss_store = FAISS.from_documents(documents=docs, embedding=self.embedding_model)
         os.makedirs(self.index_dir, exist_ok=True)
         faiss_store.save_local(self.index_dir)
@@ -33,26 +37,28 @@ class YouTubeVectorStore:
     def get_retriever(self):
         if not self.vectorstore:
             raise ValueError("FAISS store is not loaded.")
-        return self.vectorstore.as_retriever()
+        return self.vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 2})
 
-    def get_multiquery_retriever(self, model):
+    def get_multiquery_retriever(self):
         base_retriever = self.get_retriever()
         return MultiQueryRetriever.from_llm(
             retriever=base_retriever,
-            llm=model,
-            prompts=multiqueryprompt
+            llm=multiquery_model,
+            prompt=multiqueryprompt
         )
 
-    def video_already_processed(self, video_id: str) -> bool:
+
+    def video_already_processed(self) -> bool:
         if not self.vectorstore:
             return False
-        results = self.vectorstore.similarity_search("what elon musk said", k=5, filter={"source": video_id})
+        results = self.vectorstore.similarity_search("what elon musk said", k=1, filter={"source": self.youtubeID})
         return len(results) > 0
 
-    def get_chunks(self, video_id: str):
+
+    def get_chunks(self):
         if not self.vectorstore:
             return []
-        return self.vectorstore.similarity_search("what elon musk said", k=5, filter={"source": video_id})
+        return self.vectorstore.similarity_search("what elon musk said", k=5, filter={"source": self.youtubeID})
 
 
 
