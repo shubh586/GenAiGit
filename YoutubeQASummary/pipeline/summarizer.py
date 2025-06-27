@@ -12,17 +12,7 @@ import time
 from model import chunk_model, summary_model
 from loader import extract_video_id
 from vector_store import YouTubeVectorStore
-
-
-
-
-
-
-
 load_dotenv()
-
-
-
 async def summarize_chunk(chunk: str) -> str:
     """Summarize a single text chunk with throttling.""" 
     summary_chain=chunk_model.get_chain(summarizer_prompt)
@@ -34,8 +24,6 @@ async def summarize_summary_chunk(chunk: str) -> str:
     summary_chain=summary_model.get_chain(final_summary_prompt)
     response = await summary_chain.ainvoke({"summary_input":chunk})
     return response.content
-
-
 
 def summarize_chunks(chunks: List[str]) -> List[str]:
     """Summarize all chunks in parallel with throttling."""
@@ -52,7 +40,6 @@ def summarize_chunks(chunks: List[str]) -> List[str]:
         return results
     return asyncio.run(run_all())
 
-
 def summarize_all(chunk_summaries: List[str]) -> str:
     """Merge and summarize all chunk-level summaries."""
     summary_input = "\n".join(chunk_summaries)
@@ -63,8 +50,6 @@ def summarize_all(chunk_summaries: List[str]) -> str:
         chunk_size=5000
     )
     chunked_summary_input=splitter.split_text(summary_input)
-    """Summarize all summary chunks in parallel with throttling."""
-  
     """Summarize all chunks in parallel with throttling."""
     async def run_all():
         results = []
@@ -80,26 +65,20 @@ def summarize_all(chunk_summaries: List[str]) -> str:
     return asyncio.run(run_all())
   
 
-
-
 VIDEO="https://www.youtube.com/watch?v=q9icMJ48z6U"
 VIDEO2="https://www.youtube.com/watch?v=XpIMuCeEtSk"
 
+if __name__ == "__main__":
+    chunk_list = getTranscriptChunks(VIDEO2)
+    print("\nThe length of the chunk list is:", len(chunk_list))
+    start_time = time.time()
+    result_list = summarize_chunks(chunk_list)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
 
-
-chunk_list = getTranscriptChunks(VIDEO2)
-print("\nThe length of the chunk list is:", len(chunk_list))
-start_time = time.time()
-result_list = summarize_chunks(chunk_list)
-end_time = time.time()
-elapsed_time = end_time - start_time
-
-print(f"\n🕒 Time taken to summarize all chunks: {elapsed_time:.2f} seconds")
-print("\nThe length of the result list is:", len(result_list))
-vid=extract_video_id(VIDEO2)
-store=YouTubeVectorStore(vid)
-
-
-
-print("\n\nhere is the final summary \n", summarize_all(result_list))
+    print(f"\n🕒 Time taken to summarize all chunks: {elapsed_time:.2f} seconds")
+    print("\nThe length of the result list is:", len(result_list))
+    vid=extract_video_id(VIDEO2)
+    store=YouTubeVectorStore(vid)
+    print("\n\nhere is the final summary \n", summarize_all(result_list))
 

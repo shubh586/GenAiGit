@@ -51,14 +51,17 @@ class YouTubeVectorStore:
     def video_already_processed(self) -> bool:
         if not self.vectorstore:
             return False
-        results = self.vectorstore.similarity_search("what elon musk said", k=1, filter={"source": self.youtubeID})
+        results = self.vectorstore.similarity_search("", k=1, filter={"source": self.youtubeID})
         return len(results) > 0
 
 
-    def get_chunks(self):
+    def get_chunks(self)->List[str]:
         if not self.vectorstore:
             return []
-        return self.vectorstore.similarity_search("what elon musk said", k=5, filter={"source": self.youtubeID})
+        all_chunks=list(self.vectorstore.docstore._dict.values())
+        all_summarize_chunks=[doc.page_content for doc in all_chunks]
+        return all_summarize_chunks
+    
 
 
 

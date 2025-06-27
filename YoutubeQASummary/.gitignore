@@ -1,1 +1,3 @@
-git rm --cached .env
+.env
+/home/shubh/Programming/genai/Mywork/llm/YoutubeQASummary/data
+/home/shubh/Programming/genai/Mywork/llm/YoutubeQASummary/pipeline/__pycache__
