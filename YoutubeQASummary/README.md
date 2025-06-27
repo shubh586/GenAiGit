@@ -39,6 +39,7 @@ This project leverages **LangChain**, **Groq LLMs**, and **FAISS** to turn any Y
 
 ## 🧠 Architecture
 
+```mermaid
 graph TD
     A[YouTube URL] --> B[Transcript Loader]
     B --> C[Check if FAISS Store Exists]
@@ -53,35 +54,48 @@ graph TD
     H -->|YES| I[MultiQuery Retriever]
     I --> J[QA Model (LLM)]
     H -->|NO| K[Chat Model (LLM)]
+```
 
-📋 Installation
 
-1. Clone this repository'
+### 📋 Installation
 
-git clone https://github.com/your-username/youtube-qa-summarizer.git
-cd youtube-qa-summarizer
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/shubh586/GenAiGit.git
+   cd GenAiGit/YoutubeQASummary
+   ```
 
-2. Create and activate a virtual environment
+2. **Create and activate a virtual environment**  
+   **Windows (PowerShell):**  
+   ```bash
+   .\venv\Scripts\Activate
+   ```  
+   **Linux/macOS:**  
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   ```
 
-# For Linux/macOS
-python -m venv venv
-source venv/bin/activate  
+3. **Install the dependencies**  
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-# For Windows (PowerShell)
-.\venv\Scripts\Activate
+4. **Set up environment variables**  
+   Create a `.env` file in the root directory with:
+   ```env
+   GROQ_API_KEY=your_groq_api_key_here
+   HUGGINGFACE_API_KEY=your_huggingface_api_key_here
+   ```
 
-3. Install the dependencies
-pip install -r requirements.txt
+### 🏁 Run the App
 
-4. Set up environment variables
-   Create a .env file in the root directory with your API keys:
-GROQ_API_KEY=your_groq_api_key_here
-HUGGINGFACE_API_KEY=your_huggingface_api_key_here
+Launch the Streamlit interface:
 
-🏁 Run the App
-To launch the Streamlit interface:
+```bash
+streamlit run pipeline/streamlit.py
+```
 
-streamlit run pipeline/streamlit_app.py
 
 
 
