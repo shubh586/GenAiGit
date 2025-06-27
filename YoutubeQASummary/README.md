@@ -40,22 +40,21 @@ This project leverages **LangChain**, **Groq LLMs**, and **FAISS** to turn any Y
 ## 🧠 Architecture
 
 ```mermaid
-graph TD
-    A[YouTube URL] --> B[Transcript Loader]
-    B --> C[Check if FAISS Store Exists]
-    C -->|Exists| C1[Load Summary Chunks from Store]
-    C1 --> E[Final Summary Merger (LLM)]
-    C -->|Not Exists| D[Chunking (Token-based)]
-    D --> E1[Chunk Summarization (LLM)]
-    E1 --> F[FAISS Vector Store]
+flowchart TD
+    A["YouTube URL"] --> B["Transcript Loader"]
+    B --> C{"FAISS Store Exists?"}
+    C -->|Yes| C1["Load Summary Chunks from Store"]
+    C1 --> E["Final Summary Merger (LLM)"]
+    C -->|No| D["Chunking (Token-based)"]
+    D --> E1["Chunk Summarization (LLM)"]
+    E1 --> F["FAISS Vector Store"]
     F --> E
 
-    G[User Question] --> H[Classification (LLM)]
-    H -->|YES| I[MultiQuery Retriever]
-    I --> J[QA Model (LLM)]
-    H -->|NO| K[Chat Model (LLM)]
+    G["User Question"] --> H{"Is it a Video-related Question?"}
+    H -->|YES| I["MultiQuery Retriever"]
+    I --> J["QA Model (LLM)"]
+    H -->|NO| K["Chat Model (LLM)"]
 ```
-
 
 ### 📋 Installation
 
