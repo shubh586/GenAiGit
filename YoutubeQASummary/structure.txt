@@ -19,8 +19,6 @@ youtube_summarizer/
 │   ├── qa_tool.py         → LangChain tool to answer questions
 │   └── __init__.py        → Tool registry (optional)
 │
-├── utils/
-│   └── text_utils.py      → Token counters, cleaner, join/merge utils
 │
 ├── data/
 │   └── store/             → Persisted Chroma DB or temp files
