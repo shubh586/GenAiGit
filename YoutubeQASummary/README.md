@@ -43,18 +43,19 @@ This project leverages **LangChain**, **Groq LLMs**, and **FAISS** to turn any Y
 flowchart TD
     A["YouTube URL"] --> B["Transcript Loader"]
     B --> C{"FAISS Store Exists?"}
-    C -->|Yes| C1["Load Summary Chunks from Store"]
+    C --> C1["Load Summary Chunks"]
+    C --> D["Chunking (Token-based)"]
     C1 --> E["Final Summary Merger (LLM)"]
-    C -->|No| D["Chunking (Token-based)"]
     D --> E1["Chunk Summarization (LLM)"]
     E1 --> F["FAISS Vector Store"]
     F --> E
 
-    G["User Question"] --> H{"Is it a Video-related Question?"}
-    H -->|YES| I["MultiQuery Retriever"]
+    G["User Question"] --> H["Query Classification (LLM)"]
+    H --> I["MultiQuery Retriever"]
     I --> J["QA Model (LLM)"]
-    H -->|NO| K["Chat Model (LLM)"]
+    H --> K["Chat Model (LLM)"]
 ```
+
 
 ### 📋 Installation
 
